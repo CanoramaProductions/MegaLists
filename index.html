@@ -175,6 +175,7 @@
     <button id="addListButton">Add New List</button>
   </div>
 </div>
+
 <script>
   const listsContainer = document.getElementById('lists');
   const addListButton = document.getElementById('addListButton');
@@ -271,13 +272,15 @@
     const input = document.getElementById(`newItem${listIndex}`);
     const fileInput = document.getElementById(`newFile${listIndex}`);
     const titleInput = document.getElementById(`newTitle${listIndex}`);
-    const type = document.querySelectorAll('.add-item select')[listIndex].value;
-
+    const type = document.querySelector(`#newItem${listIndex}`).previousElementSibling.value;
+    
     let newItem = { type };
-
-    if (type === 'text' || type === 'website') {
+    if (type === 'text') {
       newItem.value = input.value;
-      if (type === 'website') newItem.title = titleInput.value || 'Visit Link';
+      input.value = '';
+    } else if (type === 'website') {
+      newItem.value = input.value;
+      newItem.title = titleInput.value || 'Visit Link';
       input.value = '';
       titleInput.value = '';
     } else if (type === 'file' || type === 'image') {
