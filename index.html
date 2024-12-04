@@ -172,12 +172,12 @@
 <div class="container">
   <div id="lists"></div>
   <div class="add-list">
-    <button id="addList">Add New List</button>
+    <button id="addListButton">Add New List</button>
   </div>
 </div>
 <script>
   const listsContainer = document.getElementById('lists');
-  const addListButton = document.getElementById('addList');
+  const addListButton = document.getElementById('addListButton');
 
   let lists = JSON.parse(localStorage.getItem('lists')) || [];
 
@@ -304,6 +304,23 @@
     lists[listIndex].items.splice(itemIndex, 1);
     saveLists();
     renderLists();
+  }
+
+  function updateItemType(listIndex, select) {
+    const type = select.value;
+    const fileInput = document.getElementById(`newFile${listIndex}`);
+    const titleInput = document.getElementById(`newTitle${listIndex}`);
+    
+    if (type === 'file' || type === 'image') {
+      fileInput.style.display = 'inline-block';
+      titleInput.style.display = 'none';
+    } else if (type === 'website') {
+      titleInput.style.display = 'inline-block';
+      fileInput.style.display = 'none';
+    } else {
+      fileInput.style.display = 'none';
+      titleInput.style.display = 'none';
+    }
   }
 
   function toggleTheme() {
