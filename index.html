@@ -136,7 +136,13 @@
         <div class="list-items">
           ${list.items.map((item, itemIndex) => `
             <div class="list-item">
-              <span>${item.type === 'text' ? item.value : `<a href="${item.value}" target="_blank">${item.type === 'file' ? 'File' : item.value}</a>`}</span>
+              ${
+                item.type === 'text'
+                  ? `<span>${item.value}</span>`
+                  : item.type === 'website'
+                  ? `<button onclick="window.open('${item.value}', '_blank')">${item.title || 'Visit Link'}</button>`
+                  : `<span>${item.value}</span>`
+              }
               <button onclick="deleteItem(${listIndex}, ${itemIndex})">Delete</button>
             </div>
           `).join('')}
@@ -144,16 +150,23 @@
         <div class="add-item">
           <select onchange="updateItemType(${listIndex}, this)">
             <option value="text">Text</option>
-            <option value="file">File</option>
-            <option value="image">Image</option>
             <option value="website">Website</option>
           </select>
           <input type="text" placeholder="Add item..." id="newItem${listIndex}">
+          <input type="text" placeholder="Button title (for links)" id="newTitle${listIndex}" style="display:none;">
           <button onclick="addItem(${listIndex})">Add</button>
         </div>
       `;
 
       listsContainer.appendChild(listElement);
+    });
+
+    // Update visibility of title input for "website" type
+    document.querySelectorAll('.add-item select').forEach((select, index) => {
+      select.addEventListener('change', () => {
+        const titleInput = document.getElementById(`newTitle${index}`);
+        titleInput.style.display = select.value === 'website' ? 'inline-block' : 'none';
+      });
     });
   }
 
@@ -177,14 +190,21 @@
 
   function addItem(listIndex) {
     const input = document.getElementById(`newItem${listIndex}`);
+    const titleInput = document.getElementById(`newTitle${listIndex}`);
     const newItem = input.value.trim();
-    const type = document.querySelectorAll(`.add-item select`)[listIndex].value;
+    const type = document.querySelectorAll('.add-item select')[listIndex].value;
 
     if (newItem) {
-      lists[listIndex].items.push({ type, value: newItem });
+      if (type === 'website') {
+        const title = titleInput.value.trim() || 'Visit Link';
+        lists[listIndex].items.push({ type, value: newItem, title });
+      } else {
+        lists[listIndex].items.push({ type, value: newItem });
+      }
       saveLists();
       renderLists();
       input.value = '';
+      titleInput.value = '';
     }
   }
 
