@@ -72,8 +72,14 @@
       border-radius: 5px;
       cursor: pointer;
     }
+    .list-item img {
+      max-width: 100px;
+      max-height: 100px;
+      border-radius: 8px;
+    }
     .add-item {
       display: flex;
+      flex-wrap: wrap;
       margin-top: 1em;
       gap: 0.5em;
     }
@@ -139,9 +145,13 @@
               ${
                 item.type === 'text'
                   ? `<span>${item.value}</span>`
+                  : item.type === 'file'
+                  ? `<a href="${item.value}" download>Download File</a>`
+                  : item.type === 'image'
+                  ? `<img src="${item.value}" alt="Image">`
                   : item.type === 'website'
                   ? `<button onclick="window.open('${item.value}', '_blank')">${item.title || 'Visit Link'}</button>`
-                  : `<span>${item.value}</span>`
+                  : ''
               }
               <button onclick="deleteItem(${listIndex}, ${itemIndex})">Delete</button>
             </div>
@@ -150,6 +160,8 @@
         <div class="add-item">
           <select onchange="updateItemType(${listIndex}, this)">
             <option value="text">Text</option>
+            <option value="file">File</option>
+            <option value="image">Image</option>
             <option value="website">Website</option>
           </select>
           <input type="text" placeholder="Add item..." id="newItem${listIndex}">
@@ -161,7 +173,6 @@
       listsContainer.appendChild(listElement);
     });
 
-    // Update visibility of title input for "website" type
     document.querySelectorAll('.add-item select').forEach((select, index) => {
       select.addEventListener('change', () => {
         const titleInput = document.getElementById(`newTitle${index}`);
